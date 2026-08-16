@@ -32,10 +32,25 @@ svg {
   position: absolute;
   background: #333;
   color: #fff;
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 10px 12px;
+  border-radius: 6px;
   font-size: 14px;
   pointer-events: none;
-  white-space: nowrap;
+  white-space: normal;        /* чтобы текст мог переноситься */
+  max-width: 250px;           /* ограничим ширину, чтобы не растягивалось */
   z-index: 10;
+}
+
+.tooltip-title {
+  margin: 0 0 5px 0;          /* отступ снизу */
+  font-size: 18px;            /* крупный кегль для заголовка */
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.tooltip-text {
+  margin: 0;
+  font-size: 13px;            /* меньший кегль для описания */
+  line-height: 1.4;
+  color: #ddd;                /* чуть светлее, чтобы отличалось */
 }
