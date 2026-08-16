@@ -1,20 +1,23 @@
-/* Контейнер карты */
-.map-container {
-  position: relative;
-  width: 100%;            /* занимает всю ширину окна */
+/* Сброс стандартных отступов браузера */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Сама SVG-карта */
+/* Контейнер карты занимает всю ширину окна */
+.map-container {
+  width: 100%;
+}
+
+/* Сама SVG-карта растягивается на всю ширину контейнера */
 svg {
   display: block;
-  width: 100%;            /* растягивается на всю ширину контейнера */
-  height: auto;           /* высота подстраивается автоматически */
+  width: 100%;
+  height: auto;
 }
 
 /* Подсветка зон при наведении */
-.region {
-  cursor: pointer;
-}
 .region:hover polygon,
 .region:hover circle,
 .region:hover rect {
