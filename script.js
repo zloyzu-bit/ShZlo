@@ -1,4 +1,3 @@
-// Находим все зоны и тултип
 const regions = document.querySelectorAll('.region');
 const tooltip = document.getElementById('tooltip');
 const tooltipTitle = tooltip.querySelector('.tooltip-title');
