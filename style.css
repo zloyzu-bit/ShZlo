@@ -1,27 +1,25 @@
 /* Контейнер карты */
 .map-container {
   position: relative;
-  display: inline-block; /* чтобы контейнер облегал содержимое */
+  width: 100%;            /* занимает всю ширину окна */
 }
 
 /* Сама SVG-карта */
 svg {
   display: block;
-  max-width: 100%; /* адаптивность */
-  height: auto;
+  width: 100%;            /* растягивается на всю ширину контейнера */
+  height: auto;           /* высота подстраивается автоматически */
 }
 
-/* Интерактивные зоны */
+/* Подсветка зон при наведении */
 .region {
   cursor: pointer;
 }
-
-/* Подсветка при наведении */
 .region:hover polygon,
 .region:hover circle,
 .region:hover rect {
-  fill: rgba(255, 255, 0, 0.4); /* полупрозрачный жёлтый */
-  stroke: #ff0000; /* красная обводка */
+  fill: rgba(255, 255, 0, 0.4);
+  stroke: #ff0000;
   stroke-width: 2px;
 }
 
@@ -34,7 +32,7 @@ svg {
   padding: 5px 10px;
   border-radius: 4px;
   font-size: 14px;
-  pointer-events: none; /* чтобы тултип не мешал мыши */
+  pointer-events: none;
   white-space: nowrap;
   z-index: 10;
 }
