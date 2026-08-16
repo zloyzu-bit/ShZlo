@@ -3,30 +3,55 @@ const regions = document.querySelectorAll('.region');
 const tooltip = document.getElementById('tooltip');
 const container = document.querySelector('.map-container');
 
+// Функция для показа тултипа
+function showTooltip(text, x, y) {
+  tooltip.textContent = text;
+  tooltip.style.display = 'block';
+  // Позиционируем тултип относительно контейнера
+  const rect = container.getBoundingClientRect();
+  tooltip.style.left = (x - rect.left + 15) + 'px';
+  tooltip.style.top = (y - rect.top + 15) + 'px';
+}
+
+// Функция для скрытия тултипа
+function hideTooltip() {
+  tooltip.style.display = 'none';
+}
+
 // Для каждой зоны вешаем обработчики
 regions.forEach(region => {
-  // При наведении мыши показываем тултип
-  region.addEventListener('mouseenter', () => {
-    const text = region.dataset.tooltip; // берём текст из data-tooltip
+  // === Поведение для мыши (наведение) ===
+  region.addEventListener('mouseenter', (e) => {
+    const text = region.dataset.tooltip;
     if (text) {
-      tooltip.textContent = text;
-      tooltip.style.display = 'block';
+      showTooltip(text, e.clientX, e.clientY);
     }
   });
 
-  // При движении мыши обновляем позицию тултипа
   region.addEventListener('mousemove', (e) => {
-    const rect = container.getBoundingClientRect();
-    // Позиция мыши относительно контейнера
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    // Смещаем тултип немного вправо и вниз от курсора
-    tooltip.style.left = (x + 15) + 'px';
-    tooltip.style.top = (y + 15) + 'px';
+    const text = region.dataset.tooltip;
+    if (text) {
+      showTooltip(text, e.clientX, e.clientY);
+    }
   });
 
-  // При уходе мыши скрываем тултип
   region.addEventListener('mouseleave', () => {
-    tooltip.style.display = 'none';
+    hideTooltip();
   });
+
+  // === Поведение для касаний (клик/тап) ===
+  region.addEventListener('click', (e) => {
+    e.stopPropagation(); // чтобы клик не всплывал к document и не скрывал тултип сразу
+    const text = region.dataset.tooltip;
+    if (text) {
+      showTooltip(text, e.clientX, e.clientY);
+    }
+  });
+});
+
+// Скрываем тултип при клике в любом месте вне зон
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.region')) {
+    hideTooltip();
+  }
 });
