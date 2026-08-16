@@ -1,54 +1,28 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Привет мир с JS</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        h1 {
-            color: #333;
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 1.2rem;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Интерактивная карта</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1 id="greeting">Привет, мир!</h1>
-    <button id="changeTextBtn">Нажми меня</button>
+  <div class="map-container">
+    <!-- SVG будет здесь -->
+    <svg viewBox="0 0 1800 1220" xmlns="http://www.w3.org/2000/svg">
+      <!-- Подложка: ваше изображение -->
+      <image href="map.png" width="1800" height="1220" />
 
-    <script>
-        // Находим элементы на странице
-        const heading = document.getElementById('greeting');
-        const button = document.getElementById('changeTextBtn');
+      <!-- Интерактивные зоны (пока одна для примера) -->
+      <g class="region" data-tooltip="Это зона А">
+        <polygon points="100,100 200,80 250,150 180,200" fill="transparent" />
+      </g>
+    </svg>
 
-        // Добавляем обработчик клика по кнопке
-        button.addEventListener('click', function() {
-            heading.textContent = 'Ура! JavaScript работает!';
-            heading.style.color = '#e91e63';
-        });
-    </script>
+    <!-- Всплывающая подсказка -->
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
