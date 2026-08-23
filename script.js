@@ -97,3 +97,83 @@ regions.forEach(region => {
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.region')) hideTooltip();
 });
+
+// ==========================================
+// НАСТРОЙКИ МЕТКИ (измените под себя)
+// ==========================================
+const MARKER_CONFIG = {
+  // Время появления (часы, минуты)
+  addHour: 0,          // 0 = полночь
+  addMinute: 40,
+
+  // Время исчезновения (часы, минуты)
+  removeHour: 6,
+  removeMinute: 0,
+
+  // Координаты метки на SVG (как в статике)
+  x: 200,              // левый верхний угол метки по X
+  y: 300,              // левый верхний угол метки по Y
+
+  // Размер метки
+  width: 50,
+  height: 50,
+
+  // Путь к файлу метки (проверьте имя и расположение)
+  src: 'marker.png'
+};
+
+// ==========================================
+// КОД (не трогайте, если не уверены)
+// ==========================================
+const svg = document.querySelector('svg');
+let markerElement = null; // ссылка на созданный элемент метки
+
+// Проверяет, находится ли текущее время в интервале [add, remove)
+function isTimeInRange() {
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const start = MARKER_CONFIG.addHour * 60 + MARKER_CONFIG.addMinute;
+  const end = MARKER_CONFIG.removeHour * 60 + MARKER_CONFIG.removeMinute;
+  return currentMinutes >= start && currentMinutes < end;
+}
+
+// Создаёт SVG-элемент <image> для метки
+function createMarkerElement() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const img = document.createElementNS(NS, 'image');
+  img.setAttribute('href', MARKER_CONFIG.src);
+  img.setAttribute('x', MARKER_CONFIG.x);
+  img.setAttribute('y', MARKER_CONFIG.y);
+  img.setAttribute('width', MARKER_CONFIG.width);
+  img.setAttribute('height', MARKER_CONFIG.height);
+  img.classList.add('dynamic-marker'); // класс для возможной стилизации
+  return img;
+}
+
+// Добавить метку, если её нет и время подходящее
+function addMarker() {
+  if (markerElement) return; // уже добавлена
+  if (isTimeInRange()) {
+    markerElement = createMarkerElement();
+    svg.appendChild(markerElement);
+    console.log('Метка добавлена в', new Date().toLocaleTimeString());
+  }
+}
+
+// Удалить метку, если время вышло за пределы интервала
+function removeMarker() {
+  if (markerElement && !isTimeInRange()) {
+    markerElement.remove();
+    markerElement = null;
+    console.log('Метка удалена в', new Date().toLocaleTimeString());
+  }
+}
+
+// Проверка каждые 10 секунд
+setInterval(() => {
+  addMarker();
+  removeMarker();
+}, 10000);
+
+// Первая проверка при загрузке страницы
+addMarker();
