@@ -1,27 +1,26 @@
 // ==========================================
-// 1. ВСПЛЫВАЮЩИЕ ПОДСКАЗКИ ДЛЯ ЗОН
+// ВСПЛЫВАЮЩИЕ ПОДСКАЗКИ ДЛЯ ЗОН И МЕТОК
 // ==========================================
-const regions = document.querySelectorAll('.region');
-const tooltip = document.getElementById('tooltip');
-const tooltipTitle = tooltip?.querySelector('.tooltip-title');
-const tooltipText = tooltip?.querySelector('.tooltip-text');
-const container = document.querySelector('.map-container');
+function attachRegionEvents(region) {
+  const tooltip = document.getElementById('tooltip');
+  const tooltipTitle = tooltip?.querySelector('.tooltip-title');
+  const tooltipText = tooltip?.querySelector('.tooltip-text');
+  const container = document.querySelector('.map-container');
 
-function showTooltip(title, desc, x, y) {
-  if (!tooltip) return;
-  if (tooltipTitle) tooltipTitle.textContent = title;
-  if (tooltipText) tooltipText.textContent = desc;
-  tooltip.style.display = 'block';
-  const rect = container.getBoundingClientRect();
-  tooltip.style.left = (x - rect.left + 15) + 'px';
-  tooltip.style.top = (y - rect.top + 15) + 'px';
-}
+  function showTooltip(title, desc, x, y) {
+    if (!tooltip) return;
+    if (tooltipTitle) tooltipTitle.textContent = title;
+    if (tooltipText) tooltipText.textContent = desc;
+    tooltip.style.display = 'block';
+    const rect = container.getBoundingClientRect();
+    tooltip.style.left = (x - rect.left + 15) + 'px';
+    tooltip.style.top = (y - rect.top + 15) + 'px';
+  }
 
-function hideTooltip() {
-  if (tooltip) tooltip.style.display = 'none';
-}
+  function hideTooltip() {
+    if (tooltip) tooltip.style.display = 'none';
+  }
 
-regions.forEach(region => {
   region.addEventListener('mouseenter', (e) => {
     const title = region.dataset.title;
     const desc = region.dataset.desc;
@@ -42,27 +41,34 @@ regions.forEach(region => {
     const desc = region.dataset.desc;
     if (title) showTooltip(title, desc, e.clientX, e.clientY);
   });
-});
+}
 
+// Привязываем события ко всем существующим зонам
+document.querySelectorAll('.region').forEach(attachRegionEvents);
+
+// Скрываем тултип при клике вне зон
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.region')) hideTooltip();
+  if (!e.target.closest('.region')) {
+    const tooltip = document.getElementById('tooltip');
+    if (tooltip) tooltip.style.display = 'none';
+  }
 });
 
 // ==========================================
-// 2. АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ МЕТКИ С ПОДСКАЗКОЙ
+// АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ МЕТКИ С ПОДСКАЗКОЙ
 // ==========================================
 const MARKER_CONFIG = {
-  addHour: 0,
-  addMinute: 32,
-  removeHour: 0,
-  removeMinute: 36,
-  x: 200,
-  y: 300,
-  width: 50,
-  height: 50,
-  src: 'marker.png',
-  title: 'Лавка смерти',               // заголовок подсказки
-  desc: 'Тут можно менять добро на добро'        // текст подсказки
+  addHour: 0,          // час появления (0 = полночь)
+  addMinute: 39,      // минуты появления
+  removeHour: 0,       // час исчезновения
+  removeMinute: 40,     // минуты исчезновения
+  x: 200,              // координата X метки
+  y: 300,              // координата Y метки
+  width: 50,           // ширина метки
+  height: 50,          // высота метки
+  src: 'marker.png',   // путь к файлу метки
+  title: 'Метка',      // заголовок подсказки
+  desc: 'Описание метки' // текст подсказки
 };
 
 const svg = document.querySelector('svg');
