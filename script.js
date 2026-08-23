@@ -49,18 +49,20 @@ document.addEventListener('click', (e) => {
 });
 
 // ==========================================
-// 2. АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ МЕТКИ ПО ВРЕМЕНИ
+// 2. АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ МЕТКИ С ПОДСКАЗКОЙ
 // ==========================================
 const MARKER_CONFIG = {
   addHour: 0,
-  addMinute: 29,
+  addMinute: 32,
   removeHour: 0,
-  removeMinute: 30,
+  removeMinute: 36,
   x: 200,
   y: 300,
   width: 50,
   height: 50,
-  src: 'marker.png'
+  src: 'marker.png',
+  title: 'Лавка смерти',               // заголовок подсказки
+  desc: 'Тут можно менять добро на добро'        // текст подсказки
 };
 
 const svg = document.querySelector('svg');
@@ -76,14 +78,23 @@ function isTimeInRange() {
 
 function createMarkerElement() {
   const NS = 'http://www.w3.org/2000/svg';
+
+  // Создаём группу-обёртку с классом region и данными для подсказки
+  const group = document.createElementNS(NS, 'g');
+  group.setAttribute('class', 'region');
+  group.dataset.title = MARKER_CONFIG.title;
+  group.dataset.desc = MARKER_CONFIG.desc;
+
+  // Внутри группы создаём изображение
   const img = document.createElementNS(NS, 'image');
   img.setAttribute('href', MARKER_CONFIG.src);
   img.setAttribute('x', MARKER_CONFIG.x);
   img.setAttribute('y', MARKER_CONFIG.y);
   img.setAttribute('width', MARKER_CONFIG.width);
   img.setAttribute('height', MARKER_CONFIG.height);
-  img.classList.add('dynamic-marker');
-  return img;
+
+  group.appendChild(img);
+  return group;
 }
 
 function addMarker() {
@@ -91,6 +102,7 @@ function addMarker() {
   if (isTimeInRange()) {
     markerElement = createMarkerElement();
     svg.appendChild(markerElement);
+    attachRegionEvents(markerElement); // привязываем события к новой метке
     console.log('Метка добавлена в', new Date().toLocaleTimeString());
   }
 }
