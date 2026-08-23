@@ -124,6 +124,6 @@ function removeMarker() {
 setInterval(() => {
   addMarker();
   removeMarker();
-}, 10000);
+}, 5000);
 
 addMarker();
