@@ -3,6 +3,90 @@ const tooltip = document.getElementById('tooltip');
 const tooltipTitle = tooltip.querySelector('.tooltip-title');
 const tooltipText = tooltip.querySelector('.tooltip-text');
 const container = document.querySelector('.map-container');
+const markerSchedule = [
+  {
+    hour: 23,
+    minute: 40,
+    daily: true,           // повторять каждый день
+    type: 'image',         // PNG-метка
+    x: 200,
+    y: 150,
+    href: 'marker.png',    // путь к файлу PNG
+    width: 40,
+    height: 40
+  },
+ 
+
+function createMarker(marker) {
+  const svgNS = 'http://www.w3.org/2000/svg';
+  let element;
+
+  if (marker.type === 'circle') {
+    element = document.createElementNS(svgNS, 'circle');
+    element.setAttribute('cx', marker.x);
+    element.setAttribute('cy', marker.y);
+    element.setAttribute('r', marker.radius || 10);
+    element.setAttribute('fill', marker.fill || 'red');
+  } else if (marker.type === 'text') {
+    element = document.createElementNS(svgNS, 'text');
+    element.setAttribute('x', marker.x);
+    element.setAttribute('y', marker.y);
+    element.setAttribute('font-size', marker.size || 20);
+    element.setAttribute('fill', marker.color || 'black');
+    element.textContent = marker.text;
+  } else if (marker.type === 'image') {
+    element = document.createElementNS(svgNS, 'image');
+    element.setAttribute('href', marker.href);       // или 'xlink:href' для старых браузеров
+    element.setAttribute('x', marker.x);
+    element.setAttribute('y', marker.y);
+    if (marker.width) element.setAttribute('width', marker.width);
+    if (marker.height) element.setAttribute('height', marker.height);
+  }
+
+  // Добавляем класс для возможной стилизации
+  if (element) {
+    element.classList.add('dynamic-marker');
+  }
+  return element;
+}
+
+// Функция добавления метки в SVG
+function addMarkerToMap(marker) {
+  const svg = document.getElementById('map-svg');
+  if (!svg) {
+    console.error('SVG с id="map-svg" не найден');
+    return;
+  }
+  const newMarker = createMarker(marker);
+  if (newMarker) {
+    svg.appendChild(newMarker);
+  }
+}
+
+// Проверка расписания и добавление меток
+function checkSchedule() {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+
+  markerSchedule.forEach((marker) => {
+    // Если время совпало и метка ещё не добавлена сегодня
+    if (currentHour === marker.hour && currentMinute === marker.minute) {
+      if (!marker.addedToday) {
+        addMarkerToMap(marker);
+        marker.addedToday = true;
+      }
+    } else {
+      // Если время не совпало, сбрасываем флаг, чтобы на следующий день добавить снова
+      marker.addedToday = false;
+    }
+  });
+}
+
+// Запуск проверки каждые 10 секунд (можно изменить на 60000 для проверки раз в минуту)
+setInterval(checkSchedule, 10000);
+// Первая проверка при загрузке
+checkSchedule();
 
 function showTooltip(title, desc, x, y) {
   tooltipTitle.textContent = title;
@@ -98,114 +182,4 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.region')) hideTooltip();
 });
 
-// ==========================================
-// 2. АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ МЕТОК ПО РАСПИСАНИЮ
-// ==========================================
 
-// Массив событий: когда и что добавлять
-const markerSchedule = [
-  {
-    hour: 23,
-    minute: 40,
-    daily: true,           // повторять каждый день
-    type: 'image',         // PNG-метка
-    x: 200,
-    y: 150,
-    href: 'marker.png',    // путь к файлу PNG
-    width: 40,
-    height: 40
-  },
-  {
-    hour: 12,
-    minute: 0,
-    daily: true,
-    type: 'circle',        // круг
-    x: 400,
-    y: 300,
-    radius: 15,
-    fill: 'yellow'
-  },
-  {
-    hour: 18,
-    minute: 30,
-    daily: true,
-    type: 'text',          // текст (эмодзи/символ)
-    x: 500,
-    y: 400,
-    text: '⭐',
-    size: 30,
-    color: 'gold'
-  }
-];
-
-// Функция создания SVG-элемента метки
-function createMarker(marker) {
-  const svgNS = 'http://www.w3.org/2000/svg';
-  let element;
-
-  if (marker.type === 'circle') {
-    element = document.createElementNS(svgNS, 'circle');
-    element.setAttribute('cx', marker.x);
-    element.setAttribute('cy', marker.y);
-    element.setAttribute('r', marker.radius || 10);
-    element.setAttribute('fill', marker.fill || 'red');
-  } else if (marker.type === 'text') {
-    element = document.createElementNS(svgNS, 'text');
-    element.setAttribute('x', marker.x);
-    element.setAttribute('y', marker.y);
-    element.setAttribute('font-size', marker.size || 20);
-    element.setAttribute('fill', marker.color || 'black');
-    element.textContent = marker.text;
-  } else if (marker.type === 'image') {
-    element = document.createElementNS(svgNS, 'image');
-    element.setAttribute('href', marker.href);       // или 'xlink:href' для старых браузеров
-    element.setAttribute('x', marker.x);
-    element.setAttribute('y', marker.y);
-    if (marker.width) element.setAttribute('width', marker.width);
-    if (marker.height) element.setAttribute('height', marker.height);
-  }
-
-  // Добавляем класс для возможной стилизации
-  if (element) {
-    element.classList.add('dynamic-marker');
-  }
-  return element;
-}
-
-// Функция добавления метки в SVG
-function addMarkerToMap(marker) {
-  const svg = document.getElementById('map-svg');
-  if (!svg) {
-    console.error('SVG с id="map-svg" не найден');
-    return;
-  }
-  const newMarker = createMarker(marker);
-  if (newMarker) {
-    svg.appendChild(newMarker);
-  }
-}
-
-// Проверка расписания и добавление меток
-function checkSchedule() {
-  const now = new Date();
-  const currentHour = now.getHours();
-  const currentMinute = now.getMinutes();
-
-  markerSchedule.forEach((marker) => {
-    // Если время совпало и метка ещё не добавлена сегодня
-    if (currentHour === marker.hour && currentMinute === marker.minute) {
-      if (!marker.addedToday) {
-        addMarkerToMap(marker);
-        marker.addedToday = true;
-      }
-    } else {
-      // Если время не совпало, сбрасываем флаг, чтобы на следующий день добавить снова
-      marker.addedToday = false;
-    }
-  });
-}
-
-// Запуск проверки каждые 10 секунд (можно изменить на 60000 для проверки раз в минуту)
-setInterval(checkSchedule, 10000);
-// Первая проверка при загрузке
-checkSchedule();
