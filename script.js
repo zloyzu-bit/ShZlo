@@ -53,9 +53,9 @@ document.addEventListener('click', (e) => {
 // ==========================================
 const MARKER_CONFIG = {
   addHour: 0,
-  addMinute: 30,
+  addMinute: 29,
   removeHour: 0,
-  removeMinute: 31,
+  removeMinute: 30,
   x: 200,
   y: 300,
   width: 50,
