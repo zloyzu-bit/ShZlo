@@ -1,56 +1,6 @@
-const regions = document.querySelectorAll('.region');
-const tooltip = document.getElementById('tooltip');
-const tooltipTitle = tooltip.querySelector('.tooltip-title');
-const tooltipText = tooltip.querySelector('.tooltip-text');
-const container = document.querySelector('.map-container');
-
-function showTooltip(title, desc, x, y) {
-  tooltipTitle.textContent = title;
-  tooltipText.textContent = desc;
-  tooltip.style.display = 'block';
-  const rect = container.getBoundingClientRect();
-  tooltip.style.left = (x - rect.left + 15) + 'px';
-  tooltip.style.top = (y - rect.top + 15) + 'px';
-}
-
-function hideTooltip() {
-  tooltip.style.display = 'none';
-}
-
-regions.forEach(region => {
-  region.addEventListener('mouseenter', (e) => {
-    const title = region.dataset.title;
-    const desc = region.dataset.desc;
-    if (title) {
-      showTooltip(title, desc, e.clientX, e.clientY);
-    }
-  });
-
-  region.addEventListener('mousemove', (e) => {
-    const title = region.dataset.title;
-    const desc = region.dataset.desc;
-    if (title) {
-      showTooltip(title, desc, e.clientX, e.clientY);
-    }
-  });
-
-  region.addEventListener('mouseleave', hideTooltip);
-
-  region.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const title = region.dataset.title;
-    const desc = region.dataset.desc;
-    if (title) {
-      showTooltip(title, desc, e.clientX, e.clientY);
-    }
-  });
-});
-
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.region')) {
-    hideTooltip();
-  }
-});
+// ==========================================
+// 1. ВСПЛЫВАЮЩИЕ ПОДСКАЗКИ ДЛЯ ЗОН
+// ==========================================
 const regions = document.querySelectorAll('.region');
 const tooltip = document.getElementById('tooltip');
 const tooltipTitle = tooltip?.querySelector('.tooltip-title');
@@ -99,36 +49,23 @@ document.addEventListener('click', (e) => {
 });
 
 // ==========================================
-// НАСТРОЙКИ МЕТКИ (измените под себя)
+// 2. АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ МЕТКИ ПО ВРЕМЕНИ
 // ==========================================
 const MARKER_CONFIG = {
-  // Время появления (часы, минуты)
-  addHour: 0,          // 0 = полночь
-  addMinute: 20,
-
-  // Время исчезновения (часы, минуты)
+  addHour: 0,
+  addMinute: 25,
   removeHour: 6,
   removeMinute: 0,
-
-  // Координаты метки на SVG (как в статике)
-  x: 200,              // левый верхний угол метки по X
-  y: 300,              // левый верхний угол метки по Y
-
-  // Размер метки
+  x: 200,
+  y: 300,
   width: 50,
   height: 50,
-
-  // Путь к файлу метки (проверьте имя и расположение)
   src: 'marker.png'
 };
 
-// ==========================================
-// КОД (не трогайте, если не уверены)
-// ==========================================
 const svg = document.querySelector('svg');
-let markerElement = null; // ссылка на созданный элемент метки
+let markerElement = null;
 
-// Проверяет, находится ли текущее время в интервале [add, remove)
 function isTimeInRange() {
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -137,7 +74,6 @@ function isTimeInRange() {
   return currentMinutes >= start && currentMinutes < end;
 }
 
-// Создаёт SVG-элемент <image> для метки
 function createMarkerElement() {
   const NS = 'http://www.w3.org/2000/svg';
   const img = document.createElementNS(NS, 'image');
@@ -146,13 +82,12 @@ function createMarkerElement() {
   img.setAttribute('y', MARKER_CONFIG.y);
   img.setAttribute('width', MARKER_CONFIG.width);
   img.setAttribute('height', MARKER_CONFIG.height);
-  img.classList.add('dynamic-marker'); // класс для возможной стилизации
+  img.classList.add('dynamic-marker');
   return img;
 }
 
-// Добавить метку, если её нет и время подходящее
 function addMarker() {
-  if (markerElement) return; // уже добавлена
+  if (markerElement) return;
   if (isTimeInRange()) {
     markerElement = createMarkerElement();
     svg.appendChild(markerElement);
@@ -160,7 +95,6 @@ function addMarker() {
   }
 }
 
-// Удалить метку, если время вышло за пределы интервала
 function removeMarker() {
   if (markerElement && !isTimeInRange()) {
     markerElement.remove();
@@ -169,11 +103,9 @@ function removeMarker() {
   }
 }
 
-// Проверка каждые 10 секунд
 setInterval(() => {
   addMarker();
   removeMarker();
 }, 10000);
 
-// Первая проверка при загрузке страницы
 addMarker();
