@@ -101,9 +101,9 @@ document.addEventListener('click', (e) => {
 
 const markerConfig = {
   addHour: 0,          // час появления (0 = полночь)
-  addMinute: 10,       // минуты появления
+  addMinute: 13,       // минуты появления
   removeHour: 0,       // час исчезновения
-  removeMinute: 12,     // минуты исчезновения
+  removeMinute: 15,     // минуты исчезновения
   x: 200,              // координата X на SVG (как в статике)
   y: 300,              // координата Y
   width: 50,           // ширина метки
