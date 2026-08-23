@@ -104,7 +104,7 @@ document.addEventListener('click', (e) => {
 const MARKER_CONFIG = {
   // Время появления (часы, минуты)
   addHour: 0,          // 0 = полночь
-  addMinute: 40,
+  addMinute: 20,
 
   // Время исчезновения (часы, минуты)
   removeHour: 6,
