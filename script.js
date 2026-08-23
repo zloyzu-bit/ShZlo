@@ -98,72 +98,67 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.region')) hideTooltip();
 });
 
-
 // ==========================================
-// АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ/УДАЛЕНИЕ МЕТКИ ПО ВРЕМЕНИ
+// АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ/УДАЛЕНИЕ PNG-МЕТКИ ПО ВРЕМЕНИ
 // ==========================================
 
 // Настройки
-const ADD_HOUR = 23;      // час добавления (0 = полночь)
-const ADD_MINUTE = 50;   // минуты добавления
+const ADD_HOUR = 0;      // час добавления (0 = полночь)
+const ADD_MINUTE = 40;   // минуты добавления
 const REMOVE_HOUR = 6;   // час удаления
 const REMOVE_MINUTE = 0; // минуты удаления
 
-const svg = document.getElementById('map-svg');
-let markerElement = null;       // здесь будет ссылка на добавленную метку
-let markerAddedToday = false;   // флаг, что метка уже добавлена сегодня
+const mapContainer = document.getElementById('mapContainer'); // id контейнера
+let markerElement = null;
+let markerAddedToday = false;
 
-// Функция создания PNG-метки (SVG <image>)
+// Функция создания метки (HTML <img>)
 function createPngMarker() {
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const img = document.createElementNS(svgNS, 'image');
-  img.setAttribute('href', 'marker.png');      // путь к вашему PNG
-  img.setAttribute('x', '200');                // координата X (подберите свою)
-  img.setAttribute('y', '150');                // координата Y
-  img.setAttribute('width', '40');             // ширина метки
-  img.setAttribute('height', '40');            // высота метки
-  img.classList.add('dynamic-marker');         // класс для стилизации (необязательно)
+  const img = document.createElement('img');
+  img.src = 'marker.png';        // путь к вашей PNG-метке
+  img.className = 'dynamic-marker';
+  // Задаём координаты в процентах или пикселях относительно контейнера
+  img.style.left = '25%';        // например, 25% от ширины контейнера
+  img.style.top = '30%';         // 30% от высоты
+  img.style.width = '40px';      // ширина метки
+  img.style.height = '40px';     // высота метки
   return img;
 }
 
-// Функция добавления метки
+// Добавление метки
 function addMarker() {
-  if (!svg || markerAddedToday) return;
+  if (!mapContainer || markerAddedToday) return;
   markerElement = createPngMarker();
-  svg.appendChild(markerElement);
+  mapContainer.appendChild(markerElement);
   markerAddedToday = true;
   console.log('Метка добавлена в', new Date().toLocaleTimeString());
 }
 
-// Функция удаления метки
+// Удаление метки
 function removeMarker() {
   if (markerElement) {
     markerElement.remove();
     markerElement = null;
-    markerAddedToday = false; // сбрасываем, чтобы завтра снова добавить
+    markerAddedToday = false;
     console.log('Метка удалена в', new Date().toLocaleTimeString());
   }
 }
 
-// Проверка текущего времени и выполнение действий
+// Проверка времени
 function checkTime() {
   const now = new Date();
   const h = now.getHours();
   const m = now.getMinutes();
 
-  // Добавление метки в заданное время
   if (h === ADD_HOUR && m === ADD_MINUTE && !markerAddedToday) {
     addMarker();
   }
 
-  // Удаление метки в заданное время
   if (h === REMOVE_HOUR && m === REMOVE_MINUTE && markerElement) {
     removeMarker();
   }
 }
 
-// Запускаем проверку каждые 10 секунд (можно изменить на 60000 для проверки раз в минуту)
+// Запускаем проверку каждые 10 секунд (можно 60000)
 setInterval(checkTime, 10000);
-
-// Первая проверка при загрузке страницы
 checkTime();
