@@ -103,8 +103,8 @@ document.addEventListener('click', (e) => {
 // ==========================================
 
 // Настройки
-const ADD_HOUR = 0;      // час добавления (0 = полночь)
-const ADD_MINUTE = 40;   // минуты добавления
+const ADD_HOUR = 23;      // час добавления (0 = полночь)
+const ADD_MINUTE = 54;   // минуты добавления
 const REMOVE_HOUR = 6;   // час удаления
 const REMOVE_MINUTE = 0; // минуты удаления
 
