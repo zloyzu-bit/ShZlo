@@ -97,3 +97,63 @@ regions.forEach(region => {
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.region')) hideTooltip();
 });
+
+
+const markerConfig = {
+  addHour: 0,          // час появления (0 = полночь)
+  addMinute: 08,       // минуты появления
+  removeHour: 6,       // час исчезновения
+  removeMinute: 0,     // минуты исчезновения
+  x: 200,              // координата X на SVG (как в статике)
+  y: 300,              // координата Y
+  width: 50,           // ширина метки
+  height: 50,          // высота метки
+  src: 'marker.png'    // путь к файлу метки (проверьте имя)
+};
+
+const svg = document.querySelector('svg');
+let markerElement = null; // здесь храним ссылку на добавленную метку
+
+function isWithinDisplayPeriod() {
+  const now = new Date();
+  const totalMinutes = now.getHours() * 60 + now.getMinutes();
+  const start = markerConfig.addHour * 60 + markerConfig.addMinute;
+  const end = markerConfig.removeHour * 60 + markerConfig.removeMinute;
+  return totalMinutes >= start && totalMinutes < end;
+}
+
+function createMarker() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const img = document.createElementNS(NS, 'image');
+  img.setAttribute('href', markerConfig.src);
+  img.setAttribute('x', markerConfig.x);
+  img.setAttribute('y', markerConfig.y);
+  img.setAttribute('width', markerConfig.width);
+  img.setAttribute('height', markerConfig.height);
+  img.classList.add('dynamic-marker'); // класс для возможной стилизации
+  return img;
+}
+
+function addMarkerIfNeeded() {
+  if (markerElement) return; // уже добавлена
+  if (isWithinDisplayPeriod()) {
+    markerElement = createMarker();
+    svg.appendChild(markerElement);
+    console.log('Метка добавлена:', new Date().toLocaleTimeString());
+  }
+}
+
+function removeMarkerIfNeeded() {
+  if (markerElement && !isWithinDisplayPeriod()) {
+    markerElement.remove();
+    markerElement = null;
+    console.log('Метка удалена:', new Date().toLocaleTimeString());
+  }
+}
+
+setInterval(() => {
+  addMarkerIfNeeded();
+  removeMarkerIfNeeded();
+}, 10000);
+
+addMarkerIfNeeded();
