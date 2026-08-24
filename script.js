@@ -59,7 +59,7 @@ document.addEventListener('click', (e) => {
 // ==========================================
 const MARKER_CONFIG = {
   addHour: 01,          // час появления (0 = полночь)
-  addMinute: 05,      // минуты появления
+  addMinute: 12,      // минуты появления
   removeHour: 04,       // час исчезновения
   removeMinute: 00,     // минуты исчезновения
   x: 200,              // координата X метки
