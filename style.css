@@ -20,7 +20,8 @@ svg {
 /* Подсветка зон при наведении */
 .region:hover polygon,
 .region:hover circle,
-.region:hover rect {
+.region:hover rect, 
+.region:hover path {
   fill: rgba(255, 255, 0, 0.4);
   stroke: #936a6a;
   stroke-width: 2px;
